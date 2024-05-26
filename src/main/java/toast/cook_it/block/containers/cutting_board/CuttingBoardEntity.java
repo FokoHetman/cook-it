@@ -6,14 +6,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.util.math.BlockPos;
-import toast.cook_it.CookIt;
 import toast.cook_it.block.CookingBlockEntity;
 import toast.cook_it.block.ImplementedInventory;
 import toast.cook_it.recipes.CuttingBoardRecipe;
 import toast.cook_it.registries.CookItBlockEntities;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class CuttingBoardEntity extends CookingBlockEntity implements ImplementedInventory {
 
@@ -21,23 +20,31 @@ public class CuttingBoardEntity extends CookingBlockEntity implements Implemente
         super(CookItBlockEntities.CUTTING_BOARD_ENTITY, pos, state, 1);
     }
 
-
     public void processRecipe(Item tool) {
-        Optional<RecipeEntry<CuttingBoardRecipe>> recipe = getCurrentRecipe();
-        if (recipe.isPresent() && tool.equals(recipe.get().value().getTool().getItem())) {
-            Item item = recipe.get().value().getResult(null).getItem();
-            ItemStack output = new ItemStack(item, recipe.get().value().getOutputCount());
-            CookIt.LOGGER.info(String.valueOf(output));
-            this.setStack(0, output);
-            CookIt.LOGGER.error("Success!");
+        for (RecipeEntry<CuttingBoardRecipe> cuttingBoardRecipeRecipeEntry : getCurrentRecipe()) {
+            if (cuttingBoardRecipeRecipeEntry.value() != null && isValidTool(tool)) {
+                Item item = cuttingBoardRecipeRecipeEntry.value().getResult(null).getItem();
+                ItemStack output = new ItemStack(item, cuttingBoardRecipeRecipeEntry.value().getOutputCount());
+                this.setStack(0, output);
+            }
         }
     }
 
-    private Optional<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
+    public boolean isValidTool(Item tool) {
+        for (RecipeEntry<CuttingBoardRecipe> cuttingBoardRecipeRecipeEntry : getCurrentRecipe()) {
+            Item item = cuttingBoardRecipeRecipeEntry.value().getTool().getItem();
+            if (item.equals(tool)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<RecipeEntry<CuttingBoardRecipe>> getCurrentRecipe() {
         SimpleInventory inv = new SimpleInventory(this.size());
         for (int i = 0; i < this.size(); i++) {
             inv.setStack(i, this.getStack(i));
         }
-        return Objects.requireNonNull(getWorld()).getRecipeManager().getFirstMatch(CuttingBoardRecipe.Type.INSTANCE, inv, getWorld());
+        return Objects.requireNonNull(getWorld()).getRecipeManager().getAllMatches(CuttingBoardRecipe.Type.INSTANCE, inv, getWorld());
     }
 }

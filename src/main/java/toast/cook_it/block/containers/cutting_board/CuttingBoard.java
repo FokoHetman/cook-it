@@ -18,7 +18,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import toast.cook_it.CookIt;
 import toast.cook_it.registries.CookItItems;
 
 public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityProvider {
@@ -46,27 +45,25 @@ public class CuttingBoard extends HorizontalFacingBlock implements BlockEntityPr
         if (blockEntity == null) {
             return ActionResult.FAIL;
         }
-
         ItemStack heldItem = player.getStackInHand(hand);
+
         if (blockEntity.isEmpty()) {
             if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
                 return ActionResult.FAIL;
             } else if (!heldItem.isEmpty()) {
                 blockEntity.setStack(0, heldItem.split(1));
-            } else {
-                return ActionResult.FAIL;
-            }
-        } else if (!heldItem.isEmpty()) {
-            if (heldItem.getItem().equals(CookItItems.FRYER_BASKET)) {
-                return ActionResult.FAIL;
-            } else {
-                blockEntity.processRecipe(heldItem.getItem());
+                return ActionResult.SUCCESS;
             }
         } else {
-            CookIt.LOGGER.error("Returning item");
+            if (blockEntity.isValidTool(heldItem.getItem())) {
+                blockEntity.processRecipe(heldItem.getItem());
+                return ActionResult.SUCCESS;
+            }
             player.getInventory().insertStack(blockEntity.getStack(0));
+            blockEntity.clear();
+            return ActionResult.SUCCESS;
         }
-        return ActionResult.SUCCESS;
+        return ActionResult.FAIL;
     }
 
 

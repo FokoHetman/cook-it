@@ -6,7 +6,5 @@
   "output": {
     "item": "cook-it:dough_rolled"
   },
-  "tool": {
-    "item": "cook-it:rolling_pin"
-  }
+  "tool": "cook-it:rolling_pin"
 }

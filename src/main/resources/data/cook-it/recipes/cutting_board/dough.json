@@ -1,11 +1,11 @@
 {
+  "comment": "So you rolled the dough too much...",
   "type": "cook-it:cutting_board",
   "input": {
     "item": "cook-it:dough_rolled"
   },
   "output": {
-    "item": "cook-it:raw_donut"
+    "item": "cook-it:dough"
   },
-  "count": 4,
-  "tool": "cook-it:donut_cutter"
+  "tool": "minecraft:air"
 }

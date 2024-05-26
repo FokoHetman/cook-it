@@ -6,7 +6,5 @@
   "output": {
     "item": "cook-it:uncooked_french_fries"
   },
-  "tool": {
-    "item": "cook-it:knife"
-  }
+  "tool": "cook-it:knife"
 }
